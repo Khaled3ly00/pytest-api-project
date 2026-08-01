@@ -1,13 +1,16 @@
 """
-Tests for Users endpoint
+Tests for /users endpoint
 """
 
 import pytest
 
-USER_SCHEMA_KEYS = {"id", "firstName", "lastName", "username", "email", "address", "phone", "image", "company"}
+USER_SCHEMA_KEYS = {'id', 'firstName', 'lastName', 'maidenName', 'age', 'gender', 'email', 'phone', 'username',
+                    'password', 'birthDate', 'image', 'bloodGroup', 'height', 'weight', 'eyeColor', 'hair', 'ip',
+                    'address', 'macAddress', 'university', 'bank', 'company', 'ein', 'ssn', 'userAgent', 'crypto',
+                    'role'}
 
 
-# Testing the users list endpoint is reachable and returns a list.
+# Testing the users list endpoint is reachable and returns a dict.
 @pytest.mark.smoke
 def test_get_all_users(base_url, api_session):
     response = api_session.get(f"{base_url}/users")
@@ -78,7 +81,6 @@ def test_create_user(base_url, api_session):
 
 # Updating (PUT) user should return 200 and the updated user object should contain only updated fields.
 @pytest.mark.positive
-@pytest.mark.xfail
 def test_put_update_user_by_id(base_url, api_session):
     payload = {
         "lastName": "Ali",
@@ -94,7 +96,6 @@ def test_put_update_user_by_id(base_url, api_session):
 
 # Deleting user should return 204 and empty body
 @pytest.mark.positive
-@pytest.mark.xfail
 def test_delete_user_by_id(base_url, api_session):
     response = api_session.delete(f"{base_url}/users/1")
     assert response.status_code == 204
