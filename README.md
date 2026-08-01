@@ -1,9 +1,9 @@
 # pytest-api-project
 
-A small pytest-based API test suite for the Users endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list, read, create, update and delete behaviors and generates an HTML report.
+A small pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cases; it produces an HTML report suitable for quick review.
 
 ## What this repo is for
-Automated API tests that validate the Users-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producing HTML test reports.
+Automated API tests that validate the Users- and Posts-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producing HTML test reports.
 
 ## Stack
 - Language: Python 3.11 (tested)
@@ -12,7 +12,8 @@ Automated API tests that validate the Users-related endpoints of the DummyJSON e
 
 ## Contents
 - conftest.py — test fixtures (base_url and a session fixture)
-- tests/test_users.py — test cases that exercise the Users endpoints
+- tests/test_users.py — test cases that exercise the Users endpoints (updated)
+- tests/test_posts.py — test cases that exercise the Posts endpoints (new)
 - pytest.ini — pytest configuration and custom markers
 - requirements.txt — Python dependencies
 - report.html — generated pytest-html report
@@ -20,6 +21,7 @@ Automated API tests that validate the Users-related endpoints of the DummyJSON e
 ## What the tests cover (summary of test cases)
 All tests use the base URL configured in conftest.py (BASE_URL = https://dummyjson.com) and a session fixture that sets Content-Type: application/json.
 
+Users tests (tests/test_users.py) — UPDATED
 - test_get_all_users (marker: smoke)
   - Verifies GET /users responds with HTTP 200 and returns a non-empty JSON dict.
 
@@ -34,23 +36,23 @@ All tests use the base URL configured in conftest.py (BASE_URL = https://dummyjs
   - Verifies GET /users/abc (non-integer ID) returns HTTP 400.
 
 - test_get_user_schema (marker: positive)
-  - Verifies the response JSON for a user contains expected keys:
-    id, firstName, lastName, username, email, address, phone, image, company
-  - Verifies types for some fields (id int, firstName str, email contains "@").
+  - Verifies the response JSON for a user contains expected keys: id, firstName, lastName, username, email, address, phone, image, company and checks basic types/formatting.
 
 - test_create_user (marker: positive)
-  - Verifies POST /users/add with a JSON payload returns HTTP 201 and that the response body contains the submitted fields (firstName, lastName, age).
+  - Verifies POST /users/add with a JSON payload returns a success code and that the response body contains the submitted fields (firstName, lastName, age).
 
 - test_put_update_user_by_id (marker: positive, xfail)
-  - Attempts to update a user via PUT /users/1 and expects updated fields; marked xfail because the API behavior may differ (suite expects some fields to become None except updated one).
+  - Attempts to update a user via PUT and checks the response for updated fields; marked xfail for conservative expectations against the demo API.
 
 - test_delete_user_by_id (marker: positive, xfail)
-  - Attempts to delete a user via DELETE /users/1 and expects HTTP 204; marked xfail as a conservative expectation.
+  - Attempts to delete a user via DELETE and checks the expected response; marked xfail as the demo API behavior can vary.
 
-Notes on special cases:
-- Some tests are marked xfail (expected failure) because the target API may not strictly follow the assumed behavior for PUT/DELETE in this demo environment.
-- Tests are grouped with custom markers in pytest.ini:
-  - smoke, positive, negative
+Notes on the Users tests
+- The tests in tests/test_users.py were recently updated to refine assertions and parameterization. See the test file for the exact expected fields and parametrized cases.
+
+Posts tests (tests/test_posts.py) — NEW
+- Tests cover the Posts endpoints such as GET /posts and GET /posts/{id} and include positive and negative cases (list, read, and invalid-id checks).
+- The new tests are intended to follow the same fixture and reporting patterns as the Users tests.
 
 ## How to run the tests locally
 1. Create a virtual environment (recommended)
@@ -95,7 +97,7 @@ See requirements.txt — notable packages:
 - pytest-html (implicit via report.html generation in addopts)
 
 ## Test report
-A report.html file is included in the repository. This is the pytest-html output from a prior run and summarizes results (passed, xfailed, etc.).
+A report.html file is included in the repository. This is the pytest-html output from a prior run and summarizes results (passed, xfailed, etc.). Re-run the suite to regenerate the report after changes.
 
 ## Contact / Author
 Repository owner: @Khaled3ly00
