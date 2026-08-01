@@ -1,121 +1,291 @@
-# pytest-api-project
+# DummyJSON API Test Automation
 
-A pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cas[...] 
+A Python-based API test automation framework for the **DummyJSON REST API** built with **pytest** and **requests**.
 
-## What this repo is for
-Automated API tests that validate the Users- and Posts-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producin[...]
+The project demonstrates API testing best practices including positive and negative test scenarios, smoke testing, boundary value analysis (BVA), and response validation.
 
-## Stack
-- Language: Python 3.11 (tested)
-- Test framework: pytest (with pytest-html for reports)
-- HTTP client: requests
+---
 
-## Contents
-- conftest.py — test fixtures (base_url and a session fixture)
-- tests/test_users.py — test cases that exercise the Users endpoints
-- tests/test_posts.py — test cases that exercise the Posts endpoints
-- pytest.ini — pytest configuration and custom markers
-- requirements.txt — Python dependencies
-- report.html — generated pytest-html report
+## Technologies Used
 
-## What the tests cover (summary of test cases)
-All tests use the base URL configured in conftest.py (BASE_URL = https://dummyjson.com) and a session fixture that sets Content-Type: application/json.
+* Python 3.x (tested on 3.11)
+* pytest
+* requests
+* pytest-html (for HTML reports)
 
-Users tests (tests/test_users.py)
-- test_get_all_users (marker: smoke)
-  - Verifies GET /users responds with HTTP 200 and returns a non-empty JSON dict.
+---
 
-- test_get_user_by_valid_id (marker: positive, param: [1, 15, 30])
-  - Verifies GET /users/{id} returns HTTP 200 for valid IDs and the returned `id` matches the requested one.
-  - Uses basic boundary-value sampling (1, 15, 30).
+## Project Structure
 
-- test_get_user_by_invalid_id (marker: negative, param: [(0, ...), (-1, ...), (209, ...)])
-  - Verifies out-of-range or non-existent numeric IDs return HTTP 404.
+```text
+.
+├── tests/
+│   ├── test_users.py
+│   └── test_posts.py
+├── conftest.py
+├── pytest.ini
+├── requirements.txt
+└── README.md
+```
 
-- test_get_user_by_non_integer_id (marker: negative)
-  - Verifies GET /users/abc (non-integer ID) returns HTTP 400.
+---
 
-- test_get_user_schema (marker: positive)
-  - Verifies the response JSON for a user contains expected keys: id, firstName, lastName, username, email, address, phone, image, company and checks basic types/formatting.
+## Features
 
-- test_create_user (marker: positive)
-  - Verifies POST /users/add with a JSON payload returns a success code and that the response body contains the submitted fields (firstName, lastName, age).
+* Automated REST API testing
+* CRUD operation testing
+* Positive and negative test scenarios
+* Smoke tests
+* Boundary Value Analysis (BVA)
+* Response status code validation
+* JSON response body validation
+* Basic schema verification
+* Parameterized test cases using pytest
 
-- test_put_update_user_by_id (marker: positive)
-  - Attempts to update a user via PUT and checks the response for updated fields.
+---
 
-- test_delete_user_by_id (marker: positive)
-  - Attempts to delete a user via DELETE and checks the expected response.
+## Endpoints Covered
 
-Posts tests (tests/test_posts.py)
-- test_get_all_posts (marker: smoke)
-  - Verifies GET /posts responds with HTTP 200 and returns a non-empty JSON dict or list of posts.
+### Users
 
-- test_get_post_by_valid_id (marker: positive, param: [1, 25, 50])
-  - Verifies GET /posts/{id} returns HTTP 200 for valid post IDs and that the returned `id` field matches the requested one.
-  - Uses simple sampling across the ID range to cover typical responses.
+| Method | Endpoint      | Description         |
+| ------ | ------------- | ------------------- |
+| GET    | `/users`      | Retrieve all users  |
+| GET    | `/users/{id}` | Retrieve user by ID |
+| POST   | `/users/add`  | Create a new user   |
+| PUT    | `/users/{id}` | Update a user       |
+| DELETE | `/users/{id}` | Delete a user       |
 
-- test_get_post_by_invalid_id (marker: negative, param: [(0, ...), (-1, ...), (9999, ...)])
-  - Verifies requests for out-of-range or non-existent numeric post IDs return HTTP 404.
+### Posts
 
-- test_get_post_by_non_integer_id (marker: negative)
-  - Verifies GET /posts/abc (non-integer ID) returns HTTP 400.
+| Method | Endpoint               | Description                  |
+| ------ | ---------------------- | ---------------------------- |
+| GET    | `/posts`               | Retrieve all posts           |
+| GET    | `/posts/user/{id}`     | Retrieve posts by user       |
+| GET    | `/posts/{id}/comments` | Retrieve comments for a post |
+| POST   | `/posts/add`           | Create a new post            |
+| PATCH  | `/posts/{id}`          | Partially update a post      |
+| DELETE | `/posts/{id}`          | Delete a post                |
 
-- test_get_post_schema (marker: positive)
-  - Verifies the response JSON for a post contains expected keys such as id, title, body, userId, tags, reactions and checks basic types/formatting.
+---
 
-- test_create_post (marker: positive)
-  - Verifies POST /posts/add with a JSON payload returns a success code and that the response body contains the submitted fields (title, body, userId).
+## Test Coverage
 
-- test_put_update_post_by_id (marker: positive)
-  - Attempts to update a post via PUT and checks the response for updated fields and appropriate status codes.
+### Positive Tests
 
-- test_delete_post_by_id (marker: positive)
-  - Attempts to delete a post via DELETE and checks for the expected response/status code.
+* Retrieve valid users
+* Retrieve user posts
+* Retrieve post comments
+* Create users
+* Create posts
+* Update users
+* Update posts
+* Delete users
+* Delete posts
 
+### Negative Tests
 
-## How to run the tests locally
-1. Create a virtual environment (recommended)
-   python -m venv .venv
-   source .venv/bin/activate  # macOS/Linux
-   .venv\Scripts\activate     # Windows
+* Invalid user IDs
+* Invalid post IDs
+* Non-integer IDs
+* Invalid request payloads
+* Missing required fields
+* Invalid data types
 
-2. Install dependencies
-   pip install -r requirements.txt
+### Smoke Tests
 
-3. Run the full test suite and generate HTML report (pytest.ini addopts already configures the HTML report):
-   pytest
+Basic endpoint availability verification for:
 
-4. Run only smoke tests:
-   pytest -m smoke
+* Users endpoint
+* Posts endpoint
 
-5. Run only negative tests:
-   pytest -m negative
+---
 
-6. Run a single test by name:
-   pytest tests/test_users.py::test_create_user -q
+## Validation Performed
 
+* HTTP status codes
+* Response body structure
+* Required JSON fields
+* Data type validation
+* Schema key validation
+* Response payload correctness
+
+---
+
+## How to run the tests
+
+### Create a virtual environment (recommended)
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate     # Windows
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run all tests
+
+```bash
+pytest
+```
+
+### Run with verbose output
+
+```bash
+pytest -v
+```
+
+### Run only smoke tests
+
+```bash
+pytest -m smoke
+```
+
+### Run only positive tests
+
+```bash
+pytest -m positive
+```
+
+### Run only negative tests
+
+```bash
+pytest -m negative
+```
+
+### Run a single test
+
+```bash
+pytest tests/test_users.py::test_create_user -q
+```
+
+---
 
 ## Fixtures & configuration
+
 - conftest.py
-  - base_url fixture returns the base API URL (currently "https://dummyjson.com")
-  - api_session fixture creates a requests.Session, sets `Content-Type: application/json`, yields it for the session scope, and closes it when tests complete.
+  - base_url fixture returns the base API URL (currently `https://dummyjson.com`)
+  - api_session fixture creates a `requests.Session`, sets `Content-Type: application/json`, yields it for the session scope, and closes it when tests complete.
 
 - pytest.ini
   - Declares markers:
-    - smoke: Quick check for critical functions
-    - positive: Valid input test case
-    - negative: Invalid input test case
-  - addopts configured to `--html=report.html --self-contained-html -v`
+    - `smoke`: Quick check for critical functions
+    - `positive`: Valid input test case
+    - `negative`: Invalid input test case
+  - `addopts` configured to `--html=report.html --self-contained-html -v`
 
-## Dependencies
-See requirements.txt — notable packages:
-- pytest
-- requests
-- pytest-html (implicit via report.html generation in addopts)
+---
 
-## Test report
-A report.html file is included in the repository. This is the pytest-html output from a prior run and summarizes results (passed, xfailed, etc.). Re-run the suite to regenerate the report after ch[...]
+## Additional / Missing Features Added
 
-## Contact / Author
-Repository owner: @Khaled3ly00
+These items were added to this README to improve usability, test quality, and project maturity:
+
+- JSON Schema validation recommendation
+  - Consider adding the `jsonschema` package and writing schema files (JSON) for strict payload validation in tests.
+
+- Example GitHub Actions CI workflow (minimal)
+  - Add the following file to `.github/workflows/pytest.yml` to run the test suite on pushes and pull requests:
+
+```yaml
+name: pytest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          pytest --maxfail=1 --disable-warnings -q
+      - name: Upload pytest HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: report.html
+```
+
+- Code coverage (future)
+  - Add `pytest-cov` to `requirements.txt` and enable coverage reporting in CI.
+
+- Logging
+  - Integrate basic logging in tests or fixtures for easier debugging (use Python's `logging` module).
+
+- Data-driven testing
+  - Keep example payloads in `tests/data/` (JSON files) and load them in parameterized tests.
+
+- Example request snippets
+  - Add a short `examples/` folder or a `USAGE.md` with sample curl/HTTP requests used by tests.
+
+- Contribution and issue reporting guidance
+  - See the CONTRIBUTING.md suggestion below.
+
+---
+
+## Future Improvements (non-exhaustive)
+
+* JSON Schema validation using `jsonschema` for strict contract tests
+* HTML test reports with `pytest-html` (already configured in `pytest.ini` addopts)
+* Logging for easier troubleshooting
+* CI/CD integration using GitHub Actions (example above)
+* Code coverage reporting using `pytest-cov`
+* Authentication and authorization testing
+* Performance and load testing
+* Data-driven testing using external JSON/CSV files
+
+---
+
+## Contributing
+
+Contributions are welcome. Suggested process:
+
+1. Fork the repository and create a feature branch (feature/my-feature).
+2. Add tests and code changes with clear commit messages.
+3. Update or add documentation if needed.
+4. Open a pull request describing your changes.
+
+When reporting issues, please include:
+
+* Steps to reproduce
+* Expected vs actual behavior
+* Relevant logs or test output
+
+---
+
+## License
+
+This project is provided under the MIT License. See `LICENSE` for details. (If no LICENSE file exists, add one with MIT content.)
+
+---
+
+## Author / Contact
+
+**Khaled Ali** (@Khaled3ly00)
+
+Project: Python API Test Automation using `pytest` and `requests`.
+
+---
+
+## Notes
+
+- This README replaces the prior README.md and includes additional guidance for CI, schema validation, contribution, and future improvements. If you want further changes (for example, a full JSON Schema file, example payloads, or a CONTRIBUTING.md / LICENSE file added automatically), tell me which ones and I can add them in follow-up commits.
