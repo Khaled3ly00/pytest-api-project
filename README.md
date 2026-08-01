@@ -1,9 +1,9 @@
 # pytest-api-project
 
-A pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cases; it produces an HTML report suitable for quick review.
+A pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cas[...] 
 
 ## What this repo is for
-Automated API tests that validate the Users- and Posts-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producing HTML test reports.
+Automated API tests that validate the Users- and Posts-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producin[...]
 
 ## Stack
 - Language: Python 3.11 (tested)
@@ -48,7 +48,30 @@ Users tests (tests/test_users.py)
   - Attempts to delete a user via DELETE and checks the expected response.
 
 Posts tests (tests/test_posts.py)
-- Tests cover the Posts endpoints such as GET /posts and GET /posts/{id} and include positive and negative cases.
+- test_get_all_posts (marker: smoke)
+  - Verifies GET /posts responds with HTTP 200 and returns a non-empty JSON dict or list of posts.
+
+- test_get_post_by_valid_id (marker: positive, param: [1, 25, 50])
+  - Verifies GET /posts/{id} returns HTTP 200 for valid post IDs and that the returned `id` field matches the requested one.
+  - Uses simple sampling across the ID range to cover typical responses.
+
+- test_get_post_by_invalid_id (marker: negative, param: [(0, ...), (-1, ...), (9999, ...)])
+  - Verifies requests for out-of-range or non-existent numeric post IDs return HTTP 404.
+
+- test_get_post_by_non_integer_id (marker: negative)
+  - Verifies GET /posts/abc (non-integer ID) returns HTTP 400.
+
+- test_get_post_schema (marker: positive)
+  - Verifies the response JSON for a post contains expected keys such as id, title, body, userId, tags, reactions and checks basic types/formatting.
+
+- test_create_post (marker: positive)
+  - Verifies POST /posts/add with a JSON payload returns a success code and that the response body contains the submitted fields (title, body, userId).
+
+- test_put_update_post_by_id (marker: positive)
+  - Attempts to update a post via PUT and checks the response for updated fields and appropriate status codes.
+
+- test_delete_post_by_id (marker: positive)
+  - Attempts to delete a post via DELETE and checks for the expected response/status code.
 
 
 ## How to run the tests locally
@@ -92,7 +115,7 @@ See requirements.txt — notable packages:
 - pytest-html (implicit via report.html generation in addopts)
 
 ## Test report
-A report.html file is included in the repository. This is the pytest-html output from a prior run and summarizes results (passed, xfailed, etc.). Re-run the suite to regenerate the report after changes.
+A report.html file is included in the repository. This is the pytest-html output from a prior run and summarizes results (passed, xfailed, etc.). Re-run the suite to regenerate the report after ch[...]
 
 ## Contact / Author
 Repository owner: @Khaled3ly00
