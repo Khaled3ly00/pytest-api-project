@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-BASE_URL = "https://jsonplaceholder.typicode.com"
+BASE_URL = "https://dummyjson.com"
 
 
 @pytest.fixture(scope="session")
