@@ -1,6 +1,6 @@
 # pytest-api-project
 
-A small pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cases; it produces an HTML report suitable for quick review.
+A pytest-based API test suite for the Users and Posts endpoints of the DummyJSON API (https://dummyjson.com). The suite exercises list and read behaviors and includes positive and negative test cases; it produces an HTML report suitable for quick review.
 
 ## What this repo is for
 Automated API tests that validate the Users- and Posts-related endpoints of the DummyJSON example API. Useful as a learning/demo project for writing pytest HTTP tests with requests and for producing HTML test reports.
@@ -12,8 +12,8 @@ Automated API tests that validate the Users- and Posts-related endpoints of the 
 
 ## Contents
 - conftest.py — test fixtures (base_url and a session fixture)
-- tests/test_users.py — test cases that exercise the Users endpoints (updated)
-- tests/test_posts.py — test cases that exercise the Posts endpoints (new)
+- tests/test_users.py — test cases that exercise the Users endpoints
+- tests/test_posts.py — test cases that exercise the Posts endpoints
 - pytest.ini — pytest configuration and custom markers
 - requirements.txt — Python dependencies
 - report.html — generated pytest-html report
@@ -21,7 +21,7 @@ Automated API tests that validate the Users- and Posts-related endpoints of the 
 ## What the tests cover (summary of test cases)
 All tests use the base URL configured in conftest.py (BASE_URL = https://dummyjson.com) and a session fixture that sets Content-Type: application/json.
 
-Users tests (tests/test_users.py) — UPDATED
+Users tests (tests/test_users.py)
 - test_get_all_users (marker: smoke)
   - Verifies GET /users responds with HTTP 200 and returns a non-empty JSON dict.
 
@@ -41,18 +41,15 @@ Users tests (tests/test_users.py) — UPDATED
 - test_create_user (marker: positive)
   - Verifies POST /users/add with a JSON payload returns a success code and that the response body contains the submitted fields (firstName, lastName, age).
 
-- test_put_update_user_by_id (marker: positive, xfail)
-  - Attempts to update a user via PUT and checks the response for updated fields; marked xfail for conservative expectations against the demo API.
+- test_put_update_user_by_id (marker: positive)
+  - Attempts to update a user via PUT and checks the response for updated fields.
 
-- test_delete_user_by_id (marker: positive, xfail)
-  - Attempts to delete a user via DELETE and checks the expected response; marked xfail as the demo API behavior can vary.
+- test_delete_user_by_id (marker: positive)
+  - Attempts to delete a user via DELETE and checks the expected response.
 
-Notes on the Users tests
-- The tests in tests/test_users.py were recently updated to refine assertions and parameterization. See the test file for the exact expected fields and parametrized cases.
+Posts tests (tests/test_posts.py)
+- Tests cover the Posts endpoints such as GET /posts and GET /posts/{id} and include positive and negative cases.
 
-Posts tests (tests/test_posts.py) — NEW
-- Tests cover the Posts endpoints such as GET /posts and GET /posts/{id} and include positive and negative cases (list, read, and invalid-id checks).
-- The new tests are intended to follow the same fixture and reporting patterns as the Users tests.
 
 ## How to run the tests locally
 1. Create a virtual environment (recommended)
@@ -75,8 +72,6 @@ Posts tests (tests/test_posts.py) — NEW
 6. Run a single test by name:
    pytest tests/test_users.py::test_create_user -q
 
-7. Generate a self-contained HTML report (same as default `pytest` here):
-   pytest --html=report.html --self-contained-html -v
 
 ## Fixtures & configuration
 - conftest.py
