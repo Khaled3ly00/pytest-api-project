@@ -201,7 +201,3 @@ pytest tests/test_users.py::test_create_user -q
 Project: Python API Test Automation using `pytest` and `requests`.
 
 ---
-
-## Notes
-
-- This README replaces the prior README.md and includes additional guidance for CI, schema validation, contribution, and future improvements. If you want further changes (for example, a full JSON Schema file, example payloads, or a CONTRIBUTING.md / LICENSE file added automatically), tell me which ones and I can add them in follow-up commits.
